@@ -37,6 +37,13 @@ async function run() {
             res.json(package);
         })
 
+        // get api for manage all booked packaged
+        app.get('/manage', async (req, res) => {
+            const cursor = bookedPackageCollection.find({});
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
 
         // post api for adding package
         app.post('/packages', async (req, res) => {
@@ -50,6 +57,23 @@ async function run() {
             const bookedPackage = req.body;
             const result = await bookedPackageCollection.insertOne(bookedPackage);
             res.send(result);
+        })
+
+
+        // delete api from manage 
+        app.delete('/manage/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await bookedPackageCollection.deleteOne(query);
+            res.json(result);
+        })
+
+        // delete api from My booked package
+        app.delete('/manage/booked/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await bookedPackageCollection.deleteOne(query);
+            res.json(result);
         })
 
 

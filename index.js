@@ -13,16 +13,43 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.veusr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-console.log(uri);
 
 async function run() {
     try {
         await client.connect();
-        const database = client.db("insertDB");
-        const haiku = database.collection("haiku");
-        console.log('database connected');
+        const database = client.db("travelDB");
+        const packagesCollection = database.collection("packages");
+        const bookedPackageCollection = database.collection("booked_Package");
+
+        // get api for all packages
+        app.get('/packages', async (req, res) => {
+            const cursor = packagesCollection.find({});
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+        // get  api for single package
+        app.get('/packages/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const package = await packagesCollection.findOne(query);
+            res.json(package);
+        })
 
 
+        // post api for adding package
+        app.post('/packages', async (req, res) => {
+            const package = req.body;
+            const result = await packagesCollection.insertOne(package);
+            res.send(result);
+        })
+
+        // post  api for Single booking package
+        app.post('/packages/:id', async (req, res) => {
+            const bookedPackage = req.body;
+            const result = await bookedPackageCollection.insertOne(bookedPackage);
+            res.send(result);
+        })
 
 
     } finally {

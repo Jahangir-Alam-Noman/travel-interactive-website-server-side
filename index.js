@@ -51,6 +51,7 @@ async function run() {
             });
             const result = await cursor.toArray();
             res.send(result);
+
         })
 
         // post api for adding package
@@ -84,7 +85,7 @@ async function run() {
             res.json(result);
         })
 
-        //  api for  update status
+        //  api for  update status button
         app.put('/manage/status/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };

@@ -37,13 +37,21 @@ async function run() {
             res.json(package);
         })
 
-        // get api for manage all booked packaged
+        // get api for manage all booking package
         app.get('/manage', async (req, res) => {
             const cursor = bookedPackageCollection.find({});
             const result = await cursor.toArray();
             res.send(result);
         })
 
+        // get api for My booking  package
+        app.get('/booking/:email', async (req, res) => {
+            const cursor = bookedPackageCollection.find({
+                email: req.params.email
+            });
+            const result = await cursor.toArray();
+            res.send(result);
+        })
 
         // post api for adding package
         app.post('/packages', async (req, res) => {
@@ -76,6 +84,19 @@ async function run() {
             res.json(result);
         })
 
+        //  api for  update status
+        app.put('/manage/status/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    status: "Approved"
+                },
+            };
+            const result = await bookedPackageCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
 
     } finally {
         // await client.close();
